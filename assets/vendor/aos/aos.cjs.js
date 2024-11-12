@@ -196,6 +196,7 @@ var fireEvent = function fireEvent(eventName, data) {
  * @param {node} el         element
  * @param {int}  top        scrolled distance
  */
+
 var applyClasses = function applyClasses(el, top) {
   var options = el.options,
       position = el.position,
