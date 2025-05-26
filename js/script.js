@@ -276,7 +276,224 @@ function enhanceFormInteraction() {
   });
 }
 
-// Initialize on page load
+// Navigate to previous/next image in gallery - Fixed to ensure proper operation
+function navigateGallery(projectCard, direction) {
+  const thumbnails = Array.from(projectCard.querySelectorAll(".thumbnail"));
+  if (thumbnails.length <= 1) return;
+
+  // Find current active thumbnail index
+  let currentIndex = thumbnails.findIndex((thumb) =>
+    thumb.classList.contains("active")
+  );
+  if (currentIndex === -1) currentIndex = 0;
+
+  // Calculate new index based on direction
+  let newIndex;
+  if (direction === "next") {
+    newIndex = (currentIndex + 1) % thumbnails.length;
+  } else {
+    newIndex = (currentIndex - 1 + thumbnails.length) % thumbnails.length;
+  }
+
+  // Change to the new image
+  changeProjectImage(thumbnails[newIndex], newIndex);
+
+  // For debugging
+  console.log(`Navigated to image ${newIndex + 1}`);
+}
+
+// Improved image switcher with better transitions
+function changeProjectImage(thumbnailElement, imageIndex) {
+  // Find the parent project card
+  const projectCard = thumbnailElement.closest(".project-card");
+
+  // Get all thumbnails and main image in this card
+  const thumbnails = Array.from(projectCard.querySelectorAll(".thumbnail"));
+  const mainImage = projectCard.querySelector(".main-image img");
+
+  if (!mainImage) return;
+
+  // Update active state on thumbnails
+  thumbnails.forEach((thumb) => thumb.classList.remove("active"));
+  thumbnailElement.classList.add("active");
+
+  // Get the index
+  const index = parseInt(thumbnailElement.getAttribute("data-index") || 0);
+
+  // Update slide counter if it exists
+  const counter = projectCard.querySelector(".current-slide");
+  if (counter) {
+    counter.textContent = (index + 1).toString();
+  }
+
+  // Update main image with fade effect
+  mainImage.style.opacity = "0";
+
+  setTimeout(() => {
+    mainImage.src = thumbnailElement.src;
+    mainImage.style.opacity = "1";
+  }, 300);
+
+  // Reset the slideshow timer when manually changing images
+  resetSlideshowTimer(projectCard);
+}
+
+// Separate function to reset slideshow timer for better reliability
+function resetSlideshowTimer(projectCard) {
+  if (projectCard.slideshowInterval) {
+    clearInterval(projectCard.slideshowInterval);
+    projectCard.slideshowInterval = null;
+  }
+  startSlideshow(projectCard);
+}
+
+// Completely rewritten slideshow function for reliability
+function startSlideshow(projectCard) {
+  const thumbnails = Array.from(projectCard.querySelectorAll(".thumbnail"));
+  if (thumbnails.length <= 1) return;
+
+  // Don't start a new slideshow if one is already running
+  if (projectCard.slideshowInterval) return;
+
+  // Create slideshow interval
+  projectCard.slideshowInterval = setInterval(() => {
+    // Get current active thumbnail
+    let currentIndex = thumbnails.findIndex((thumb) =>
+      thumb.classList.contains("active")
+    );
+    if (currentIndex === -1) currentIndex = 0;
+
+    // Move to next image
+    const nextIndex = (currentIndex + 1) % thumbnails.length;
+
+    // Change the image without resetting the timer (to avoid infinite loop)
+    const nextThumbnail = thumbnails[nextIndex];
+
+    // Update thumbnail active states
+    thumbnails.forEach((thumb) => thumb.classList.remove("active"));
+    nextThumbnail.classList.add("active");
+
+    // Update main image
+    const mainImage = projectCard.querySelector(".main-image img");
+    if (mainImage) {
+      mainImage.style.opacity = "0";
+      setTimeout(() => {
+        mainImage.src = nextThumbnail.src;
+        mainImage.style.opacity = "1";
+      }, 300);
+    }
+
+    // Update counter
+    const counter = projectCard.querySelector(".current-slide");
+    if (counter) counter.textContent = (nextIndex + 1).toString();
+
+    console.log(`Auto-switched to image ${nextIndex + 1}`);
+  }, 5000);
+
+  console.log(`Slideshow started with ${thumbnails.length} images`);
+}
+
+// Improved initialization for galleries
+function initProjectSlideshows() {
+  const projectCards = document.querySelectorAll(".project-card");
+
+  projectCards.forEach((card) => {
+    const gallery = card.querySelector(".project-gallery");
+    if (!gallery) return;
+
+    const thumbnails = Array.from(gallery.querySelectorAll(".thumbnail"));
+    if (thumbnails.length === 0) return;
+
+    // Ensure data-index attributes are set correctly
+    thumbnails.forEach((thumb, idx) => {
+      thumb.setAttribute("data-index", idx.toString());
+
+      // Clean up any existing listeners first (best practice)
+      thumb.removeEventListener("click", handleThumbnailClick);
+
+      // Add new click handler
+      thumb.addEventListener("click", handleThumbnailClick);
+    });
+
+    // Set first image as active
+    const mainImage = gallery.querySelector(".main-image img");
+    if (mainImage) {
+      mainImage.src = thumbnails[0].src;
+      mainImage.style.opacity = "1";
+      thumbnails[0].classList.add("active");
+    }
+
+    // Setup slide counter
+    const counter = gallery.querySelector(".current-slide");
+    const total = gallery.querySelector(".total-slides");
+    if (counter && total) {
+      counter.textContent = "1";
+      total.textContent = thumbnails.length.toString();
+    }
+
+    // Ensure clean start
+    if (card.slideshowInterval) {
+      clearInterval(card.slideshowInterval);
+      card.slideshowInterval = null;
+    }
+
+    // Start slideshow
+    startSlideshow(card);
+
+    // Add hover event handlers
+    gallery.addEventListener("mouseenter", () => {
+      if (card.slideshowInterval) {
+        clearInterval(card.slideshowInterval);
+        card.slideshowInterval = null;
+      }
+    });
+
+    gallery.addEventListener("mouseleave", () => {
+      if (!card.slideshowInterval) {
+        startSlideshow(card);
+      }
+    });
+  });
+}
+
+// Handler function for thumbnail clicks
+function handleThumbnailClick(event) {
+  event.preventDefault();
+  const thumbnail = event.currentTarget;
+  const index = parseInt(thumbnail.getAttribute("data-index"));
+  changeProjectImage(thumbnail, index);
+}
+
+// Initialize navigation buttons with stronger event handling
+function initGalleryNavigation() {
+  // First remove any existing handlers to avoid duplicates
+  document.querySelectorAll(".nav-btn").forEach((btn) => {
+    btn.replaceWith(btn.cloneNode(true));
+  });
+
+  // Add fresh event handlers
+  document.querySelectorAll(".prev-btn").forEach((button) => {
+    button.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation(); // Stop event bubbling
+      const card = button.closest(".project-card");
+      navigateGallery(card, "prev");
+      console.log("Previous button clicked");
+    });
+  });
+
+  document.querySelectorAll(".next-btn").forEach((button) => {
+    button.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation(); // Stop event bubbling
+      const card = button.closest(".project-card");
+      navigateGallery(card, "next");
+      console.log("Next button clicked");
+    });
+  });
+}
+
+// Initialize on page load - Modified to ensure proper gallery setup
 window.addEventListener("DOMContentLoaded", () => {
   // Check if we need to scroll to a section (if URL has hash)
   if (window.location.hash) {
@@ -321,7 +538,22 @@ window.addEventListener("DOMContentLoaded", () => {
   initParticles();
   initAOS();
   enhanceFormInteraction();
-
+  
+  // Make sure all slideshows are cleared and restarted
+  document.querySelectorAll(".project-card").forEach(card => {
+    if (card.slideshowInterval) {
+      clearInterval(card.slideshowInterval);
+      card.slideshowInterval = null;
+    }
+  });
+  
+  // Initialize with reliable sequence
+  console.log("Setting up gallery navigation");
+  initGalleryNavigation();
+  
+  console.log("Setting up project slideshows");
+  initProjectSlideshows();
+  
   // Add subtle parallax effect to hero section
   window.addEventListener("mousemove", (e) => {
     const mouseX = e.clientX / window.innerWidth;
@@ -329,12 +561,56 @@ window.addEventListener("DOMContentLoaded", () => {
 
     const heroContent = document.querySelector(".hero-content");
     if (heroContent) {
-      heroContent.style.transform = `translate(${mouseX * -20}px, ${
-        mouseY * -20
-      }px)`;
+      heroContent.style.transform = `translate3d(${mouseX * -30}px, ${
+        mouseY * -30
+      }px, ${mouseY * 40}px) rotateX(${mouseY * 5}deg) rotateY(${
+        mouseX * -5
+      }deg)`;
     }
   });
+
+  // Add enhanced project interactions
+  enhanceProjectCards();
 });
+
+// Initialize 3D effects
+function init3DEffects() {
+  // Initialize vanilla-tilt on skill cards only (not project cards)
+  if (typeof VanillaTilt !== "undefined") {
+    // Apply tilt effect to skill cards only
+    VanillaTilt.init(document.querySelectorAll(".skill-card"), {
+      max: 10,
+      speed: 400,
+      glare: true,
+      "max-glare": 0.3,
+      scale: 1.03,
+    });
+    
+    console.log("3D tilt effects initialized for skill cards");
+  }
+}
+
+// Enhanced project interactions without 3D
+function enhanceProjectCards() {
+  const projectCards = document.querySelectorAll('.project-card');
+  
+  projectCards.forEach((card) => {
+    // Add hover state class for more control
+    card.addEventListener('mouseenter', () => {
+      card.classList.add('hover');
+    });
+    
+    card.addEventListener('mouseleave', () => {
+      card.classList.remove('hover');
+    });
+    
+    // Optimize image loading
+    const img = card.querySelector('img:not(.thumbnail)');
+    if (img) {
+      img.loading = 'lazy';
+    }
+  });
+}
 
 // Also add a backup initialization on window load
 window.addEventListener("load", function () {

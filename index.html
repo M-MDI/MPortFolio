@@ -132,7 +132,76 @@
       <div class="container">
         <h2 data-aos="fade-up">My Projects</h2>
         <div class="project-grid">
+          <!-- New Arkanoid Clone Project -->
           <div class="project-card" data-aos="fade-up" data-aos-delay="100">
+            <div class="project-gallery">
+              <div class="main-image">
+                <img
+                  src="img/brick-breacker/brick1.png"
+                  alt="Arkanoid Clone Game"
+                  class="active"
+                />
+                <!-- Navigation buttons -->
+                <div class="gallery-nav">
+                  <button class="nav-btn prev-btn" aria-label="Previous image">
+                    <i class="fas fa-chevron-left"></i>
+                  </button>
+                  <button class="nav-btn next-btn" aria-label="Next image">
+                    <i class="fas fa-chevron-right"></i>
+                  </button>
+                </div>
+                <!-- Add slide counter -->
+                <div class="slide-counter">
+                  <span class="current-slide">1</span>/<span
+                    class="total-slides"
+                    >3</span
+                  >
+                </div>
+              </div>
+              <div class="thumbnail-container">
+                <img
+                  src="img/brick-breacker/brick1.png"
+                  alt="Gameplay"
+                  class="thumbnail active"
+                  data-index="0"
+                />
+                <img
+                  src="img/brick-breacker/brick2.png"
+                  alt="Level View"
+                  class="thumbnail"
+                  data-index="1"
+                />
+                <img
+                  src="img/brick-breacker/brick3.png"
+                  alt="Menu Screen"
+                  class="thumbnail"
+                  data-index="2"
+                />
+              </div>
+            </div>
+            <div class="project-info">
+              <h3>Arkanoid Clone – Vanilla JS Game Engine</h3>
+              <p>
+                Built a single-player Arkanoid-inspired game using only HTML and
+                vanilla JavaScript — no canvas, no frameworks. Custom engine
+                runs at a steady 60 FPS with smooth keyboard controls, pause
+                menu, and live scoreboard. Optimized DOM rendering with dev
+                tools for zero frame drops. When no engine fit the job, I built
+                my own.
+              </p>
+              <div class="project-links">
+                <a href="#" class="btn small">Play Game</a>
+                <a
+                  href="https://github.com/M-MDI/Arkanoid-Game.git"
+                  class="btn small secondary"
+                  target="_blank"
+                  >GitHub</a
+                >
+              </div>
+            </div>
+          </div>
+
+          <div class="project-card" data-aos="fade-up" data-aos-delay="200">
             <img src="img/project1.jpg" alt="Project 1" />
             <div class="project-info">
               <h3>Project Title 1</h3>
@@ -143,7 +212,7 @@
               </div>
             </div>
           </div>
-          <div class="project-card" data-aos="fade-up" data-aos-delay="200">
+          <div class="project-card" data-aos="fade-up" data-aos-delay="300">
             <img src="img/project2.jpg" alt="Project 2" />
             <div class="project-info">
               <h3>Project Title 2</h3>
@@ -154,7 +223,7 @@
               </div>
             </div>
           </div>
-          <div class="project-card" data-aos="fade-up" data-aos-delay="300">
+          <div class="project-card" data-aos="fade-up" data-aos-delay="400">
             <img src="img/project3.jpg" alt="Project 3" />
             <div class="project-info">
               <h3>Project Title 3</h3>
@@ -262,5 +331,7 @@
     </script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script src="js/script.js"></script>
+    <!-- Add vanilla-tilt.js library for 3D tilt effects before the closing body tag -->
+    <script src="https://cdn.jsdelivr.net/npm/vanilla-tilt@1.8.0/dist/vanilla-tilt.min.js"></script>
   </body>
 </html>

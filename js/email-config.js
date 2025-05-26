@@ -11,7 +11,7 @@
  */
 
 const EMAIL_CONFIG = {
-  USER_ID: "YOUR_USER_ID", // Replace with your EmailJS User ID
-  SERVICE_ID: "YOUR_SERVICE_ID", // Replace with your EmailJS Service ID
-  TEMPLATE_ID: "YOUR_TEMPLATE_ID", // Replace with your EmailJS Template ID
+  USER_ID: "Mehdi", // Replace with your EmailJS User ID
+  SERVICE_ID: "service_x67euva", // Replace with your EmailJS Service ID
+  TEMPLATE_ID: "service_x67euva", // Replace with your EmailJS Template ID
 };
