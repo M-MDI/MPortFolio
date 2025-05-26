@@ -234,22 +234,25 @@
       </div>
     </footer>
 
-    <!-- Scripts - reorganized for proper loading -->
+    <!-- Scripts - Add EmailJS config before scripts that use it -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script src="js/email-config.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
     <script>
       // Verify particles.js loaded correctly
-      document.addEventListener('DOMContentLoaded', function() {
-        console.log('DOM loaded, checking for particles.js');
-        if(typeof particlesJS !== 'undefined') {
-          console.log('✓ particles.js is loaded and ready');
+      document.addEventListener("DOMContentLoaded", function () {
+        console.log("DOM loaded, checking for particles.js");
+        if (typeof particlesJS !== "undefined") {
+          console.log("✓ particles.js is loaded and ready");
         } else {
-          console.error('✗ particles.js failed to load');
+          console.error("✗ particles.js failed to load");
           // Alternate loading method
-          var script = document.createElement('script');
-          script.src = 'https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js';
-          script.onload = function() {
-            console.log('particles.js loaded via alternate method');
-            if(typeof initParticles === 'function') {
+          var script = document.createElement("script");
+          script.src =
+            "https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js";
+          script.onload = function () {
+            console.log("particles.js loaded via alternate method");
+            if (typeof initParticles === "function") {
               initParticles();
             }
           };

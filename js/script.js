@@ -32,38 +32,6 @@ document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
   });
 });
 
-// Form submission handler
-const contactForm = document.querySelector(".contact-form");
-if (contactForm) {
-  contactForm.addEventListener("submit", function (e) {
-    e.preventDefault();
-
-    // Collect form data
-    const formData = {
-      name: this.querySelector("#name").value,
-      email: this.querySelector("#email").value,
-      message: this.querySelector("#message").value,
-    };
-
-    // Here you would typically send the form data to a server
-    // For now, we'll just log it and show a success message
-    console.log("Form submission:", formData);
-
-    // Display success message (in a real application, do this after successful submission)
-    const submitBtn = this.querySelector('button[type="submit"]');
-    const originalText = submitBtn.textContent;
-    submitBtn.textContent = "Message Sent!";
-    submitBtn.disabled = true;
-
-    // Reset form
-    setTimeout(() => {
-      this.reset();
-      submitBtn.textContent = originalText;
-      submitBtn.disabled = false;
-    }, 3000);
-  });
-}
-
 // Add scroll event for header styling
 window.addEventListener("scroll", function () {
   const header = document.querySelector("header");
@@ -76,7 +44,100 @@ window.addEventListener("scroll", function () {
   }
 });
 
-// Simpler particles initialization with direct configurations
+// Initialize EmailJS
+function initEmailJS() {
+  // Use values from config file if available
+  const userId =
+    typeof EMAIL_CONFIG !== "undefined"
+      ? EMAIL_CONFIG.USER_ID
+      : "YOUR_DEFAULT_USER_ID";
+  emailjs.init(userId);
+  console.log("EmailJS initialized");
+}
+
+// Form submission handler with EmailJS
+const contactForm = document.querySelector(".contact-form");
+if (contactForm) {
+  contactForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    // Update UI to show loading state
+    const submitBtn = this.querySelector('button[type="submit"]');
+    const originalText = submitBtn.textContent;
+    submitBtn.textContent = "Sending...";
+    submitBtn.disabled = true;
+
+    // Get form data
+    const formData = {
+      name: this.querySelector("#name").value,
+      email: this.querySelector("#email").value,
+      message: this.querySelector("#message").value,
+    };
+
+    // Send email using EmailJS
+    const serviceId =
+      typeof EMAIL_CONFIG !== "undefined"
+        ? EMAIL_CONFIG.SERVICE_ID
+        : "default_service";
+    const templateId =
+      typeof EMAIL_CONFIG !== "undefined"
+        ? EMAIL_CONFIG.TEMPLATE_ID
+        : "template_id";
+
+    emailjs
+      .send(serviceId, templateId, {
+        from_name: formData.name,
+        from_email: formData.email,
+        message: formData.message,
+      })
+      .then(() => {
+        // Success message
+        submitBtn.textContent = "Message Sent!";
+
+        // Show success notification
+        const notification = document.createElement("div");
+        notification.className = "email-notification success";
+        notification.innerHTML =
+          '<i class="fas fa-check-circle"></i> Your message has been sent successfully!';
+        document.body.appendChild(notification);
+
+        // Remove notification after 5 seconds
+        setTimeout(() => {
+          notification.classList.add("fade-out");
+          setTimeout(() => document.body.removeChild(notification), 500);
+        }, 5000);
+
+        // Reset form
+        setTimeout(() => {
+          this.reset();
+          submitBtn.textContent = originalText;
+          submitBtn.disabled = false;
+        }, 3000);
+      })
+      .catch((error) => {
+        // Error handling
+        console.error("Email sending failed:", error);
+        submitBtn.textContent = "Failed to Send";
+
+        // Show error notification
+        const notification = document.createElement("div");
+        notification.className = "email-notification error";
+        notification.innerHTML =
+          '<i class="fas fa-exclamation-circle"></i> Failed to send message. Please try again later.';
+        document.body.appendChild(notification);
+
+        // Remove notification after 5 seconds
+        setTimeout(() => {
+          notification.classList.add("fade-out");
+          setTimeout(() => document.body.removeChild(notification), 500);
+          submitBtn.textContent = originalText;
+          submitBtn.disabled = false;
+        }, 5000);
+      });
+  });
+}
+
+// Particles initialization with direct configurations
 function initParticles() {
   console.log("Initializing particles with direct method...");
 
@@ -255,7 +316,8 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Initialize new features
+  // Initialize features
+  initEmailJS();
   initParticles();
   initAOS();
   enhanceFormInteraction();
