@@ -76,136 +76,105 @@ window.addEventListener("scroll", function () {
   }
 });
 
-// Initialize particles.js for multiple sections
+// Simpler particles initialization with direct configurations
 function initParticles() {
-  console.log("Initializing particles...");
+  console.log("Initializing particles with direct method...");
 
-  // Check if particlesJS is available
-  if (typeof particlesJS !== "undefined") {
-    console.log("particlesJS is defined");
+  // Only proceed if particlesJS is available
+  if (typeof particlesJS === "undefined") {
+    console.error("particlesJS not found - adding it dynamically");
 
-    try {
-      // Initialize particles for each section
-      ["hero", "about", "skills", "projects", "contact"].forEach((section) => {
-        const containerId = `particles-js-${section}`;
-        const container = document.getElementById(containerId);
-
-        if (container) {
-          console.log(`Initializing particles for ${containerId}`);
-
-          // Load the appropriate configuration
-          if (section === "hero") {
-            particlesJS(containerId, {
-              particles: {
-                number: {
-                  value: 50,
-                  density: {
-                    enable: true,
-                    value_area: 800,
-                  },
-                },
-                color: {
-                  value: "#ffffff",
-                },
-                shape: {
-                  type: "circle",
-                  stroke: {
-                    width: 0,
-                    color: "#000000",
-                  },
-                },
-                opacity: {
-                  value: 0.6,
-                  random: true,
-                  anim: {
-                    enable: true,
-                    speed: 0.5,
-                    opacity_min: 0.1,
-                    sync: false,
-                  },
-                },
-                size: {
-                  value: 2.5,
-                  random: true,
-                  anim: {
-                    enable: true,
-                    speed: 1,
-                    size_min: 0.1,
-                    sync: false,
-                  },
-                },
-                line_linked: {
-                  enable: true,
-                  distance: 150,
-                  color: "rgba(255, 255, 255, 0.5)",
-                  opacity: 0.4,
-                  width: 1.2,
-                },
-                move: {
-                  enable: true,
-                  speed: 0.8,
-                  direction: "none",
-                  random: true,
-                  straight: false,
-                  out_mode: "out",
-                  bounce: false,
-                  attract: {
-                    enable: true,
-                    rotateX: 600,
-                    rotateY: 1200,
-                  },
-                },
-              },
-              interactivity: {
-                detect_on: "canvas",
-                events: {
-                  onhover: {
-                    enable: true,
-                    mode: "grab",
-                  },
-                  onclick: {
-                    enable: true,
-                    mode: "push",
-                  },
-                  resize: true,
-                },
-                modes: {
-                  grab: {
-                    distance: 180,
-                    line_linked: {
-                      opacity: 0.7,
-                    },
-                  },
-                  push: {
-                    particles_nb: 4,
-                  },
-                },
-              },
-              retina_detect: true,
-            });
-          } else {
-            // Use simpler configurations for other sections
-            particlesJS(containerId);
-          }
-        } else {
-          console.warn(`Container ${containerId} not found`);
-        }
-      });
-      console.log("Particles initialization completed");
-    } catch (error) {
-      console.error("Error initializing particles:", error);
-    }
-  } else {
-    console.error("particlesJS is not defined. Make sure the library is loaded.");
-
-    // Try to load the particles.js library dynamically if it's not available
+    // Add it dynamically
     const script = document.createElement("script");
-    script.src = "https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js";
+    script.src =
+      "https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js";
     script.onload = function () {
-      console.log("Particles.js loaded dynamically");
-      setTimeout(initParticles, 100);
+      console.log("Particles.js loaded dynamically, now initializing...");
+      setTimeout(setupParticles, 100);
     };
-    document.body.appendChild(script);
+    document.head.appendChild(script);
+    return;
+  }
+
+  setupParticles();
+}
+
+function setupParticles() {
+  try {
+    // Hero particles - most visible
+    if (document.getElementById("particles-js-hero")) {
+      particlesJS("particles-js-hero", {
+        particles: {
+          number: {
+            value: 80,
+            density: { enable: true, value_area: 800 },
+          },
+          color: { value: "#ffffff" },
+          shape: { type: "circle" },
+          opacity: { value: 0.7, random: true },
+          size: { value: 3, random: true },
+          line_linked: {
+            enable: true,
+            distance: 150,
+            color: "#ffffff",
+            opacity: 0.5,
+            width: 1,
+          },
+          move: {
+            enable: true,
+            speed: 1,
+            direction: "none",
+            random: true,
+          },
+        },
+      });
+      console.log("Hero particles initialized");
+    }
+
+    // Skills particles with tech colors
+    if (document.getElementById("particles-js-skills")) {
+      particlesJS("particles-js-skills", {
+        particles: {
+          number: { value: 40 },
+          color: {
+            value: ["#00ADD8", "#F7DF1E", "#E34F26", "#264DE4", "#61DAFB"],
+          },
+          shape: { type: "circle" },
+          opacity: { value: 0.6 },
+          size: { value: 4 },
+          line_linked: { enable: true, color: "#6faafe" },
+          move: { enable: true, speed: 0.8 },
+        },
+      });
+      console.log("Skills particles initialized");
+    }
+
+    // Simpler particles for other sections
+    ["about", "projects", "contact"].forEach((section) => {
+      const elementId = `particles-js-${section}`;
+      if (document.getElementById(elementId)) {
+        console.log(`Initializing ${elementId}`);
+        particlesJS(elementId, {
+          particles: {
+            number: { value: 30 },
+            color: { value: "#3a7bd5" },
+            opacity: { value: 0.3 },
+            size: { value: 2 },
+            line_linked: {
+              enable: true,
+              distance: 150,
+              color: "#3a7bd5",
+              opacity: 0.2,
+            },
+            move: { enable: true, speed: 0.6 },
+          },
+        });
+      }
+    });
+
+    console.log("All particles initialized successfully");
+  } catch (error) {
+    console.error("Error in particles initialization:", error);
   }
 }
 
@@ -303,4 +272,19 @@ window.addEventListener("DOMContentLoaded", () => {
       }px)`;
     }
   });
+});
+
+// Also add a backup initialization on window load
+window.addEventListener("load", function () {
+  console.log("Window fully loaded, checking particles");
+  const particleContainers = document.querySelectorAll(".particles-container");
+  if (particleContainers.length > 0) {
+    console.log(`Found ${particleContainers.length} particle containers`);
+    // Check if particles were initialized
+    const canvases = document.querySelectorAll(".particles-container canvas");
+    if (canvases.length === 0) {
+      console.log("No particle canvases found, reinitializing");
+      initParticles();
+    }
+  }
 });
