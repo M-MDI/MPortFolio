@@ -207,10 +207,47 @@
           </div>
 
           <div class="project-card" data-aos="fade-up" data-aos-delay="200">
-            <img src="img/project1.jpg" alt="Project 1" />
+            <div class="project-gallery">
+              <div class="main-image">
+                <img
+                  src="img/graph-ql/graph.png"
+                  alt="GraphQL Profile Dashboard"
+                  class="active"
+                />
+                <!-- Navigation buttons -->
+                <div class="gallery-nav">
+                  <button class="nav-btn prev-btn" aria-label="Previous image">
+                    <i class="fas fa-chevron-left"></i>
+                  </button>
+                  <button class="nav-btn next-btn" aria-label="Next image">
+                    <i class="fas fa-chevron-right"></i>
+                  </button>
+                </div>
+                <!-- Add slide counter -->
+                <div class="slide-counter">
+                  <span class="current-slide">1</span>/<span
+                    class="total-slides"
+                    >1</span
+                  >
+                </div>
+              </div>
+              <div class="thumbnail-container">
+                <img
+                  src="img/graph-ql/graph1.png"
+                  alt="Dashboard View"
+                  class="thumbnail active"
+                  data-index="0"
+                />
+              </div>
+            </div>
             <div class="project-info">
-              <h3>Project Title 1</h3>
-              <p>Short project description goes here.</p>
+              <h3>GraphQL Profile Dashboard</h3>
+              <p>
+                Built a personal dashboard using Zone01's GraphQL API.
+                Implemented JWT-based login and real-time user data display (XP,
+                projects, audits…). Created two dynamic SVG charts to visualize
+                progress and stats. Fully responsive and hosted online.
+              </p>
               <div class="project-links">
                 <a href="#" class="btn small">View Live</a>
                 <a href="#" class="btn small secondary">GitHub</a>
